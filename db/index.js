@@ -19,9 +19,13 @@ const UserSchema = new mongoose.Schema({
 });
 
 const CourseSchema = new mongoose.Schema({
-    tittle: String,
-    description: String,
+    tittle: {type: String , required: true},
+    description: {type: String , required: true},
     iamgeLink: String,
+    tutor: String,
+    category: {type: String,
+        tags: ["programming", "design" , "health" , "education"]
+    },
     price: Number
 });
 

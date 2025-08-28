@@ -10,7 +10,12 @@ router.post('/signup', async(req, res) => {
     const username = req.body.username;
     const password = req.body.password;
 
-    await Course.create({
+    const existingUser = await User.findOne({username})
+    if(existingUser)
+    {
+        return res.status(400).json({msg:"User already exists"})
+    }
+    await User.create({
         username: username,
         password: password
     })
@@ -21,23 +26,30 @@ router.post('/signup', async(req, res) => {
 });
 
 router.post('/signin', async(req, res) => {
-    const username = req.body.username;
-    const password = req.body.password;
+    try{
 
-    const user = await User.find({
-        username,
-        password
-    })
+        const username = req.body.username;
+        const password = req.body.password;
 
-    if(user)
-    {
-        const tokens = await jwt.sign({
-            username
-        },JWT_SECRET);
-    }
-    else{
+        const user = await User.findOne({
+            username,
+            password
+        })
 
+        if(user)
+        {
+            const tokens = jwt.sign({
+                username
+            },JWT_SECRET);
+        }
+        else{
+            res.status(400).json({msg:"enter valid credentials"})
         
+        }
+    }
+    catch(err)
+    {
+        res.status(500).json({msg: "error in sign "})
     }
 });
 

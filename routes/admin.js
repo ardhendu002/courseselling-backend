@@ -7,36 +7,59 @@ const router = Router();
 
 // Admin Routes
 router.post('/signup', async (req, res) => {
-    const username = req.body.username;
-    const password = req.body.password;
+    try{
+        const username = req.body.username;
+        const password = req.body.password;
 
-    await Admin.create({
-        username: username,
-        password: password
-    })
+        const Adminexists = await Admin.findOne({
+            username,
+            password
+        })
 
-    res.json({
-        message: "Admin created ssuccesfully"
-    })
+        if(Adminexists)
+        {
+            res.status(400).json({msg: "Admin already exists"});
+        }
+
+        await Admin.create({
+            username: username,
+            password: password
+        })
+
+        res.json({
+            message: "Admin created ssuccesfully"
+        })
+    }
+    catch(err)
+    {
+        res.json({msg : "Signup error"})
+    }
 });
 
 router.post('/signin', async(req, res) => {
-    const username = req.body.username;
-    const password = req.body.password;
+    try{
+        const username = req.body.username;
+        const password = req.body.password;
 
-    const user = await User.find({
-        username,
-        password
-    })
-    if(user)
-    {
-        res.status(404).json({msg: "user already exists"});
+        const Adminexists = await Admin.findOne({
+            username,
+            password
+        })
+
+        if(Adminexists)
+        {
+            res.status(404).json({msg: "Admin already exists"});
+        }
+        else{
+            const token = jwt.sign({
+                username
+            },JWT_SECRET);
+            res.json({token});
+        }
     }
-    else{
-        const token = jwt.sign({
-            username
-        },JWT_SECRET);
-        res.json({token});
+    catch(err)
+    {
+        res.send(400).json({msg: "Some error occured in signin"})
     }
 });
 
@@ -45,12 +68,16 @@ router.post('/courses', adminMiddleware, async(req, res) => {
     const description = req.body.description;
     const imageLink= req.body.imageLink;
     const price = req.body.price;
+    const tutor = req.body.tutor;
+    const category = req.body.category;
 
     const newcourse = await Course.create({
         tittle,
         description,
         imageLink,
-        price
+        price,
+        tutor,
+        category
     })
 
     res.json({
