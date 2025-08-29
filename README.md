@@ -46,7 +46,7 @@ This project serves as a backend for a course-selling web application. It suppor
 ---
 
 ## 🗄️ MongoDB Schemas
-
+## Schema Digram : https://excalidraw.com/#json=AM-O3yz7_EC5Ln8N8EDQh,9tGqpYaHxPYgpz4BrNdRsA
 ### Admin Schema
 
 ```js
