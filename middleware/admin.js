@@ -1,25 +1,11 @@
 // Middleware for handling auth
 const jwt = require("jsonwebtoken");
-const {JWT_SECRET} = require("../config")
-//const z = require("zod");
-
-// function adminexists(username,password){
-//     const usernamec = z.string.min(6).max(8);
-//     const password = z.string.min(5).max(8).regex([/a-z/]);
-//     const usernamecheck = usernamec.safeParse(username);
-//     const passwordcheck = username.safeParse(password);
-
-//     if(!usernamecheck.success && !passwordcheck.success)
-//     {
-//         return false;
-//     }
-//     else{
-//         return true;
-//     }
-// }
+const dotenv = require("dotenv");
+const JWT_SECRET = process.env.JWT_SECRET;
+dotenv.config();
 function adminMiddleware(req, res, next) {
     const token = req.headers.authorization;
-    const words = token.split("");
+    const words = token.split(" ");
     const jwtToken = words[1];
 
     try{
@@ -41,3 +27,4 @@ function adminMiddleware(req, res, next) {
 }
 
 module.exports = adminMiddleware;
+
