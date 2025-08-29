@@ -10,7 +10,7 @@ This project serves as a backend for a course-selling web application. It suppor
 
 ---
 
-##  Technologies Used
+##  TechStack Used
 
 - **Node.js**
 - **Express**
@@ -44,6 +44,97 @@ This project serves as a backend for a course-selling web application. It suppor
 | `/users/purchasedCourses`    | GET    | View all courses purchased by the user           | Header: `Authorization: Bearer <token>`                                | `{ purchasedCourses: [ … ] }`                                      |
 
 ---
+
+## 🗄️ MongoDB Schemas
+
+### Admin Schema
+
+```js
+const AdminSchema = new mongoose.Schema({
+  username: String,
+  password: String
+});
+```
+
+### User Schema
+
+```js
+const UserSchema = new mongoose.Schema({
+  username: String,
+  password: String,
+  usercourse: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Course'
+  }]
+});
+```
+
+### Course Schema
+
+```js
+const CourseSchema = new mongoose.Schema({
+  title: String,
+  description: String,
+  price: Number,
+  imageLink: String,
+  published: Boolean,
+  category: String
+});
+```
+
+---
+
+## 🔑 JWT Authentication
+
+This project uses **JWT (JSON Web Tokens)** for authentication.
+
+* **Generate Token on Signin:**
+
+```js
+const token = jwt.sign(
+  { username: user.username },
+  process.env.JWT_SECRET,
+  { expiresIn: "1h" }
+);
+```
+
+* **Send Token in Request Header:**
+
+```
+Authorization: Bearer <your-token-here>
+```
+
+* **Middleware for Verification:**
+
+```js
+function authMiddleware(req, res, next) {
+  try {
+    const token = req.headers.authorization.split(" ")[1];
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    if (decoded.username) {
+      next();
+    } else {
+      res.status(403).json({ msg: "Not authenticated" });
+    }
+  } catch (err) {
+    res.status(403).json({ msg: "Invalid token" });
+  }
+}
+```
+
+---
+
+
+## 🤝 Contributing
+
+Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License.
+
 
 ##  Environment Setup
 
