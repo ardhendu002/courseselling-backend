@@ -1,17 +1,19 @@
 const { Router } = require("express");
-const jwt = require("jsonwebtoken");
-const dotenv = require("dotenv");
-const JWT_SECRET = process.env.JWT_SECRET;
-dotenv.config();
-const adminMiddleware = require("../middleware/admin");
-const { Admin, Course } = require("../db/index");
 const router = Router();
+const jwt = require("jsonwebtoken");
+const adminMiddleware = require("../middleware/admin");
+const { Admin, Course } = require("../db");
+const dotenv = require("dotenv");
+dotenv.config();
+const JWT_SECRET = process.env.JWT_SECRET;
+
 
 // Admin Routes
 router.post('/signup', async (req, res) => {
     try{
         const username = req.body.username;
         const password = req.body.password;
+        console.log(username+password)
 
         const Adminexists = await Admin.findOne({
             username,
@@ -41,30 +43,28 @@ router.post('/signup', async (req, res) => {
 
 router.post('/signin', async(req, res) => {
     try{
-        const username = req.body.username;
-        const password = req.body.password;
+        const usernamec = req.body.username;
+        const passwordc = req.body.password;
 
         const Adminexists = await Admin.findOne({
-            username,
-            password
+            username: usernamec,
+            password: passwordc
         })
+
+        console.log(Adminexists)
 
         if(Adminexists)
         {
-            const tokens = jwt.sign({
-                username
-            },JWT_SECRET);
-            res.json({tokens});
-            res.json({msg:"Admin signin sucess"})
-
+            const tokens = jwt.sign({ username: usernamec }, JWT_SECRET)
+            return res.status(200).json({msg:"Signin sucess",tokens});
         }
         else{
-            res.status(400).json({msg:"Invalid credentials od admin"})
+            res.status(401).json({msg:"Admin dont exists"})
         }
     }
     catch(err)
     {
-        res.send(400).json({msg: "Some error occured in signin"})
+        res.status(500).json({msg: "Some error occured in signin"})
     }
 });
 

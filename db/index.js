@@ -1,7 +1,12 @@
 const mongoose = require('mongoose');
+const dotenv = require("dotenv");
+dotenv.config();
+const URLlink = process.env.MONGO_URL;
 
 // Connect to MongoDB
-mongoose.connect("mongodb+srv://ardhendumishra2006:subham002@course-project.xrlmqgf.mongodb.net/");
+mongoose.connect(URLlink,{
+    useNewUrlParser: true,
+    useUnifiedTopology: true});
 
 // Define schemas
 const AdminSchema = new mongoose.Schema({
