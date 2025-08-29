@@ -1,52 +1,100 @@
-## Create a course selling website
+# Course Selling Backend
 
-### Description
+A backend server for a course-selling platform with JWT-based authentication, built using **Node.js**, **Express**, **MongoDB**, and **Mongoose**.
 
-Same as the last assignment but you need to use jwts for authentication.
-We have introduced the signgin endpoints for both users and admins.
-For this one, in every authenticated requests, you need to send the jwt in headers (Authorization : "Bearer <actual token>").
-You need to use mongodb to store all the data persistently.
+---
 
-## Routes
+##  Description
 
-### Admin Routes:
+This project serves as a backend for a course-selling web application. It supports secure authentication for both **admins** and **users**, using JSON Web Tokens (JWT). Admins can create and manage courses, while users can view, purchase, and list their purchased courses.
 
-- POST /admin/signup
-  Description: Creates a new admin account.
-  Input Body: { username: 'admin', password: 'pass' }
-  Output: { message: 'Admin created successfully' }
-- POST /admin/signin
-  Description: Logs in an admin account.
-  Input Body: { username: 'admin', password: 'pass' }
-  Output: { token: 'your-token' }
-- POST /admin/courses
-  Description: Creates a new course.
-  Input: Headers: { 'Authorization': 'Bearer <your-token>' }, Body: { title: 'course title', description: 'course description', price: 100, imageLink: 'https://linktoimage.com' }
-  Output: { message: 'Course created successfully', courseId: "new course id" }
-- GET /admin/courses
-  Description: Returns all the courses.
-  Input: Headers: { 'Authorization': 'Bearer <your-token>' }
-  Output: { courses: [ { id: 1, title: 'course title', description: 'course description', price: 100, imageLink: 'https://linktoimage.com', published: true }, ... ] }
+---
 
-### User routes
+##  Technologies Used
 
-- POST /users/signup
-  Description: Creates a new user account.
-  Input: { username: 'user', password: 'pass' }
-  Output: { message: 'User created successfully' }
-- POST /users/signin
-  Description: Logs in a user account.
-  Input: { username: 'user', password: 'pass' }
-  Output: { token: 'your-token' }
-- GET /users/courses
-  Description: Lists all the courses.
-  Input: Headers: { 'Authorization': 'Bearer <your-token>' }
-  Output: { courses: [ { id: 1, title: 'course title', description: 'course description', price: 100, imageLink: 'https://linktoimage.com', published: true }, ... ] }
-- POST /users/courses/:courseId
-  Description: Purchases a course. courseId in the URL path should be replaced with the ID of the course to be purchased.
-  Input: Headers: { 'Authorization': 'Bearer <your-token>' }
-  Output: { message: 'Course purchased successfully' }
-- GET /users/purchasedCourses
-  Description: Lists all the courses purchased by the user.
-  Input: Headers: { 'Authorization': 'Bearer <your-token>' }
-  Output: { purchasedCourses: [ { id: 1, title: 'course title', description: 'course description', price: 100, imageLink: 'https://linktoimage.com', published: true }, ... ] }
+- **Node.js**
+- **Express**
+- **MongoDB** with **Mongoose**
+- **JWT (jsonwebtoken)**
+- **dotenv** for environment configuration
+
+---
+
+##  Available Routes
+
+### Admin Routes
+
+| Endpoint               | Method | Description                                  | Input                                                                 | Output                                                         |
+|------------------------|--------|----------------------------------------------|------------------------------------------------------------------------|----------------------------------------------------------------|
+| `/admin/signup`        | POST   | Create a new admin account                   | `{ username, password }`                                               | `{ message: 'Admin created successfully' }`                    |
+| `/admin/signin`        | POST   | Authenticate admin and issue a JWT           | `{ username, password }`                                               | `{ token: 'your-token' }`                                      |
+| `/admin/courses`       | POST   | Create a new course                          | Header: `Authorization: Bearer <token>`<br>Body: `{ title, description, price, imageLink }` | `{ message: 'Course created successfully', courseId: '<id>' }` |
+|                        | GET    | Fetch all courses                            | Header: `Authorization: Bearer <token>`                                | `{ courses: [ … ] }`                                           |
+
+---
+
+### User Routes
+
+| Endpoint                     | Method | Description                                      | Input                                                                 | Output                                                             |
+|------------------------------|--------|--------------------------------------------------|------------------------------------------------------------------------|----------------------------------------------------------------------|
+| `/users/signup`              | POST   | Create a new user account                        | `{ username, password }`                                               | `{ message: 'User created successfully' }`                         |
+| `/users/signin`              | POST   | Authenticate user and issue a JWT                | `{ username, password }`                                               | `{ token: 'your-token' }`                                          |
+| `/users/courses`             | GET    | List all available (published) courses           | Header: `Authorization: Bearer <token>`                                | `{ courses: [ … ] }`                                               |
+| `/users/courses/:courseId`   | POST   | Purchase a course                                | Header: `Authorization: Bearer <token>`                                | `{ message: 'Course purchased successfully' }`                     |
+| `/users/purchasedCourses`    | GET    | View all courses purchased by the user           | Header: `Authorization: Bearer <token>`                                | `{ purchasedCourses: [ … ] }`                                      |
+
+---
+
+##  Environment Setup
+
+1. **Clone the repository**:
+    ```bash
+    git clone https://github.com/ardhendu002/courseselling-backend.git
+    cd courseselling-backend
+    ```
+
+2. **Install dependencies**:
+    ```bash
+    npm install
+    ```
+
+3. **Create a `.env` file** at the project root:
+    ```env
+    PORT=3000
+    MONGO_URI=your_mongodb_connection_string
+    JWT_SECRET=your_secret_key
+    ```
+
+4. **Start the server**:
+    ```bash
+    npm start
+    ```
+
+---
+
+##  Usage Guide
+
+### For Admins:
+- **Sign Up**: POST `/admin/signup` with `{ username, password }`
+- **Sign In**: POST `/admin/signin` → receive JWT
+- **Create Course**: POST `/admin/courses` with token and course details
+- **View All Courses**: GET `/admin/courses` with token
+
+### For Users:
+- **Sign Up**: POST `/users/signup`
+- **Sign In**: POST `/users/signin` → receive JWT
+- **View Courses**: GET `/users/courses` with token
+- **Purchase Course**: POST `/users/courses/:courseId` with token
+- **View Purchased**: GET `/users/purchasedCourses` with token
+
+---
+
+##  Highlights
+
+- **Secure authentication** for admin and user workflows using JWT.
+- **Role-based access** ensures only admins can manage courses.
+- Persistent data storage with **MongoDB** and schema validation via **Mongoose**.
+- Modular and well-structured routing for easy expansion.
+
+---
+
